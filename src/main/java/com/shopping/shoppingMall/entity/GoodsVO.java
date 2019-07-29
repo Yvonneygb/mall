@@ -1,17 +1,26 @@
 package com.shopping.shoppingMall.entity;
 
+import java.util.Date;
+
 public class GoodsVO {
     private Integer id;
 
     private Integer goodsClassId;
 
+    private String goodsClassName;
+
     private String goodsName;
+
+    private String describeText;
 
     private String image;
 
-    private Integer price;
+    private Float price;
 
     private String link;
+
+    private Date addDate;
+
 
     public Integer getId() {
         return id;
@@ -37,6 +46,14 @@ public class GoodsVO {
         this.goodsName = goodsName == null ? null : goodsName.trim();
     }
 
+    public String getDescribeText() {
+        return describeText;
+    }
+
+    public void setDescribeText(String describeText) {
+        this.describeText = describeText;
+    }
+
     public String getImage() {
         return image;
     }
@@ -45,11 +62,11 @@ public class GoodsVO {
         this.image = image == null ? null : image.trim();
     }
 
-    public Integer getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
@@ -59,5 +76,35 @@ public class GoodsVO {
 
     public void setLink(String link) {
         this.link = link == null ? null : link.trim();
+    }
+
+    public Date getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(Date addDate) {
+        this.addDate = addDate;
+    }
+
+    public String getGoodsClassName() {
+        return goodsClassName;
+    }
+
+    public void setGoodsClassName(String goodsClassName) {
+        this.goodsClassName = goodsClassName;
+    }
+
+    @Override
+    public String toString() {
+        return "GoodsVO{" +
+                "id=" + id +
+                ", goodsClassId=" + goodsClassId +
+                ", goodsClassName='" + goodsClassName + '\'' +
+                ", goodsName='" + goodsName + '\'' +
+                ", image='" + image + '\'' +
+                ", price=" + price +
+                ", link='" + link + '\'' +
+                ", addDate=" + addDate +
+                '}';
     }
 }

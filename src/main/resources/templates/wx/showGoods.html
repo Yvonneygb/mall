@@ -1,10 +1,826 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<div th:replace="pc/subgroup/commonHead::commonHead"></div>
 <head>
-    <meta charset="UTF-8">
-<title>Title</title>
+    <meta charset="utf-8">
+    <title>商城</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <script th:src="@{~/frame/swiper/js/swiper-3.4.0.jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{~/frame/swiper/css/swiper-3.2.7.min.css}">
+
+    <style>
+        body {
+            background-color: #EFEFEF;
+            min-height: initial;
+        }
+
+        img {
+            width: 100%;
+            height: inherit;
+        }
+
+        .layui-tab-title li {
+            font-size: 12px;
+            line-height: 1rem;
+            padding: 0 0.1rem;
+            min-width: 4rem;
+        }
+
+        .layui-tab-bar {
+            width: 1rem;
+            height: 1rem;
+            line-height: 1rem;
+        }
+
+        .layui-tab-title {
+            height: 1.5rem;
+        }
+
+        .swiper-wrapper{
+            height: fit-content;
+        }
+
+        .container {
+            /*width: 100%;*/
+            /*border: 1px solid #ccc;*/
+        }
+
+        .swiper_classifacation {
+            width: 100%;
+        }
+
+        .swiper_classifacation .selected {
+            color: #ec5566;
+            border-bottom: 2px solid #ec5566;
+        }
+
+        .swiper_classifacation .swiper-slide {
+            text-align: center;
+            font-size: 12px;
+            height: 30px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .swiper_list {
+            width: 100%;
+        }
+
+        .swiper_list .swiper-slide {
+            height: auto;
+            padding-bottom: 0.2rem;
+            color: #fff;
+            text-align: center;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+
+        #classification .swiper-slide {
+            background-color: #fff;
+        }
+
+        .swiper-slide {
+            width: 100%;
+            height: fit-content;
+            overflow: hidden;
+            background-color: #EFEFEF;
+        }
+
+        .goods_item {
+            float: left;
+            width: 1.51rem;
+            /*height: 1.95rem;*/
+            height: 2.1rem;
+            border-radius: 2px;
+            margin-left: 0.055rem;
+            margin-top: 0.05rem;
+            background-color: #fff;
+        }
+
+        .goods_item img {
+            width: 100%;
+            height: 1.5rem;
+            border-radius: 2px 2px 0 0px;
+
+        }
+
+        .goods_name {
+            width: 90%;
+            height: 0.3rem;
+            margin: 0 auto;
+            margin-top: 0.05rem;
+            font-size: 12px;
+            text-align: left;
+            color: #000;
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .price {
+            width: 90%;
+            margin: 0 auto;
+            font-size: 14px;
+            text-align: left;
+            color: #E90012;
+        }
+
+        .price span {
+            font-size: 12px;
+        }
+
+        #slide_show {
+            padding-top: 0.35rem;
+        }
+
+        .swiper_list {
+            position: absolute;
+            top: 2.48rem;
+            z-index: -1;
+        }
+
+        .select_a {
+            color: #009688;
+            padding: 2px;
+            margin: 2px;
+            border: #009688 1px dashed;
+        }
+
+        .layui-col-md4 {
+            position: fixed;
+            width: 100%;
+            height: 0.35rem;
+            background-color: #EFEFEF;
+            z-index: 2;
+        }
+
+        .layui-input-block {
+            width: 90%;
+            height: 0.25rem;
+            min-height: 0;
+            margin: 0 auto;
+            margin-top: 0.05rem;
+        }
+
+        input[name=select_input] {
+            height: 0.25rem;
+            line-height: 0.25rem;
+            border-radius: 50px;
+            font-size: 12px;
+        }
+
+        .layui-form-select dl {
+            top: 0.3rem;
+            width: 90%;
+        }
+
+        .layui-icon-search {
+            position: absolute;
+            right: 10px;
+            top: 30%;
+            margin-top: 0;
+            cursor: pointer;
+            border: none;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+
+        }
+
+        .layui-icon {
+            font-size: 13px;
+        }
+
+        #bind_cup_step .title{
+            font-weight: 800;
+        }
+
+        #coupon_wrapper{
+            width: 96.5%;
+            height: 0.8rem;
+            margin: 0 auto;
+            margin-top: 0.05rem;
+            background-color: #fff;
+            border-radius: 2px;
+
+        }
+
+        .coupon_item{
+            float: left;
+            width: 1.5rem;
+            height: 0.5rem;
+            margin-left: 0.04rem;
+            background-image: url(../../static/images/coupon_bg_going_on.png);
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .coupon_left{
+            float: left;
+            width: 67%;
+        }
+
+        .coupon_right{
+            float: left;
+            width: 30%;
+        }
+
+        .coupon_name{
+            width: 100%;
+            height: 0.3rem;
+            line-height: 0.4rem;
+            text-align: center;
+            font-size: 16px;
+            color:#fff;
+        }
+
+        .coupon_time{
+            width:85%;
+            height: 0.1rem;
+            line-height: 0.1rem;
+            margin: 0 auto;
+            font-size: 6px;
+            background-color: #fff;
+            color:#fe3267;
+            text-align: center;
+        }
+
+        .receive{
+            width: fit-content;
+            height: 0.1rem;
+            line-height: 0.1rem;
+            margin: 0 auto;
+            margin-top: 0.17rem;
+            padding: 0.01rem;
+            text-align: center;
+            background-color: #fff;
+            color: #fe3267;
+            font-size: 6px;
+            border-radius: 50px;
+        }
+
+        .title_wrapper{
+            width: 100%;
+            height: 0.25rem;
+            line-height: 0.25rem;
+        }
+
+        .title{
+            float: left;
+            width: 0.8rem;
+            color: #fe3267;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        #more{
+            float: right;
+            width: fit-content;
+            margin-right: 0.1rem;
+            color: #fe3267;
+            font-size: 12px;
+        }
+
+        .left_line , .right_line{
+            float: left;
+            width: 0.5rem;
+            height: 0.02rem;
+            background:linear-gradient( to right ,rgba(254,51,103,0),rgba(254,51,103,1));
+            margin-top: 0.11rem;
+        }
+
+        .left_line{
+            margin-left: 0.65rem;
+        }
+
+        .right_line{
+            background:linear-gradient( to left ,rgba(254,51,103,0),rgba(254,51,103,1));
+        }
+
+    </style>
 </head>
 <body>
 
+<div class="layui-col-md4" id="search_wrapper">
+    <div class="layui-input-block" name="multiple_select">
+        <div class="layui-form-select">
+            <div class="layui-select-title">
+                <div style="display: inline-block;position: absolute;left:4px;height: 38px;line-height: 38px">
+                </div>
+                <input type="text" class="layui-input" placeholder="请输入"
+                       name="select_input" autocomplete="off" id="">
+                <i class="layui-icon layui-icon-search"></i>
+            </div>
+            <dl name="select_show" class="layui-anim layui-anim-upbit">
+                <dd lay-value="" class="layui-select-tips" style="text-align: center">
+                    <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop"></i>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="layui-carousel" id="slide_show"></div>
+
+<div class="container">
+    <!-- 选项卡 -->
+    <div class="swiper-container swiper_classifacation">
+        <div class="swiper-wrapper" id="classification"></div>
+    </div>
+    <!-- 优惠券 -->
+    <div id="coupon_wrapper"></div>
+    <!-- 内容 -->
+    <div class="swiper-container swiper_list">
+        <div class="swiper-wrapper" id="showGoodsWrapper"></div>
+    </div>
+
+</div>
+<script>
+    var pageNum = 1;
+    var pageSize = 20;
+    var totalPage = 0;
+    var file_image = "";
+    var swiper_list = "";
+    var carousel = "";
+    var timeoutInt;   // 要保证最后要运行一次
+
+    // 渲染优惠券
+    var coupon_html = "<div class=\"title_wrapper\"><div class=\"left_line\"></div><div class=\"title\">限时领取优惠</div><div class=\"right_line\"></div><div id=\"more\">更多></div></div>";
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "/coupon/readByEffectiveTime",
+        data:{
+            "endTime": changeTimeFormat(new Date())
+        },
+        success: function (data) {
+            var coupon_arr = data.data.rows;
+            for(var i = 0 ; i < 2 ; i++)
+            {
+                var time_text = "";
+
+                if(changeTimeFormat(new Date()) < coupon_arr[i]["beginTime"])
+                {
+                    // 没到开始时间
+                    time_text = coupon_arr[i]["beginTime"] + "开始";
+                }
+                else
+                {
+                    // 已经开始，没到结束时间
+                    time_text = coupon_arr[i]["endTime"] + "截止";
+                }
+
+                var _html = "<div class=\"coupon_item\" data-link='"+ coupon_arr[i]["link"] +"'><div class=\"coupon_left\"><div class=\"coupon_name\">"+ coupon_arr[i]["name"] +"</div><div class=\"coupon_time\">"+ time_text +"</div> </div><div class=\"coupon_right\"><div class=\"receive\">立即领取</div></div></div>";
+                coupon_html += _html;
+            }
+            $("#coupon_wrapper").html(coupon_html);
+            $("#coupon_wrapper").find(".coupon_item").click(function (obj) {
+                if($(this).find(".coupon_time").html().indexOf("开始") != -1)
+                {
+                    layer.msg('活动未开始');
+                }
+                else
+                {
+                    window.location.href = obj.currentTarget.dataset.link;
+                }
+
+            })
+
+            $("#more").click(function () {
+                window.location.href = localhostPath + "/showCoupon";
+            })
+        }
+    });
+
+    // 渲染分类
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "/classification/list",
+        success: function (data) {
+            class_arr = data.data.rows;
+            var html_class = "<div class='swiper-slide selected' data-id='0' data-index='0'>全部</div>";
+            var html_content = "<div class=\"swiper-slide swiper-no-swiping\"></div>";
+            var slidesPerView = 1;
+            for (var i = 0; i < class_arr.length; i++) {
+                slidesPerView++;
+                var index = i + 1;
+                var _html_class = "<div class='swiper-slide' data-id='" + class_arr[i]["id"] + "' data-index='" + index + "'>" + class_arr[i]["className"] + "</div>";
+                var _html_content = "<div class=\"swiper-slide swiper-no-swiping\"></div>";
+                html_class += _html_class;
+                html_content += _html_content;
+
+            }
+            $("#classification").html(html_class);
+            $("#showGoodsWrapper").html(html_content);
+
+            slidesPerView = slidesPerView > 5 ? 5 : slidesPerView;
+
+
+            var swiper_classifacation = new Swiper('.swiper_classifacation', {
+                slidesPerView: slidesPerView,
+                paginationClickable: true,//此参数设置为true时，点击分页器的指示点分页器会控制Swiper切换。
+                freeMode: true,//默认为false，普通模式：slide滑动时只滑动一格，并自动贴合wrapper，设置为true则变为free模式，slide会根据惯性滑动且不会贴合。
+                loop: false,//是否可循环
+                watchSlidesProgress: true,
+                watchSlidesVisibility: true,
+                onTab: function (swiper) {
+                    var n = swiper_classifacation.clickedIndex;
+                }
+            });
+
+            swiper_list = new Swiper('.swiper_list', {
+                freeModeSticky:true,  //设置为true 滑动会自动贴合
+                direction: 'horizontal',//Slides的滑动方向，可设置水平(horizontal)或垂直(vertical)。
+                loop: false,
+                width: window.innerWidth,
+                autoHeight: true,
+                observer: true,
+                observeParents: true,
+                watchSlidesVisibility: true,//自动高度。设置为true时，wrapper和container会随着当前slide的高度而发生变化。
+                onSlideChangeEnd: function (swiper) {  //回调函数，swiper从一个slide过渡到另一个slide结束时执行。
+                    console.log("回调函数，swiper从一个slide过渡到另一个slide结束时执行。");
+                    var n = swiper.activeIndex;
+                    setCurrentSlide($(".swiper_classifacation .swiper-slide").eq(n), n);
+                    swiper_classifacation.slideTo(n, 500, false);
+                }
+            });
+
+            swiper_classifacation.slides.each(function (index, val) {
+                var ele = $(this);
+                ele.on("click", function () {
+                    setCurrentSlide(ele, index);
+                    swiper_list.slideTo(index, 500, false);
+                    swiper_list.update();
+
+                    pageNum = 1;
+
+                    if (ele[0].dataset.id == 0) {
+                        renderAllGoods(1, index, "");
+                    } else {
+                        renderByClassId(ele[0].dataset.id, 1, index, "");
+                    }
+                    $("html,body").animate({scrollTop: 0}, "fast");
+
+                });
+            });
+
+            // 触发第一个选项卡的点击事件
+            $("#classification").find(".swiper-slide:eq(0)").trigger("click");
+
+
+
+        }
+    });
+
+
+    /**
+     * 懒加载
+     */
+    window.onscroll = function () {
+        setTimeout(function () {
+            if (timeoutInt != undefined) {
+                window.clearTimeout(timeoutInt);
+            }
+            timeoutInt = window.setTimeout(function () {
+                //监听事件内容
+                if (getScrollHeight() <= getDocumentTop() + getWindowHeight()) {
+                    //当滚动条到底时,这里是触发内容
+                    //异步请求数据,局部刷新dom
+                    if (totalPage == pageNum) {
+                        layer.msg('已经到底啦');
+                    } else {
+                        var layer_loading = layer.load(1);
+                        pageNum++;
+
+                        // 获取选项卡中当前选中的data-id
+                        var data_id = $("#classification").find("div[class*='selected']")[0].dataset.id;
+                        var index = $("#classification").find("div[class*='selected']")[0].dataset.index;
+
+                        // 传值html
+                        var html = $("#showGoodsWrapper .swiper-slide:eq(" + index + ")").html();
+
+                        // 根据data-id判断出发什么方法，传值
+                        if (data_id == 0) {
+                            renderAllGoods(pageNum, index, html);
+                        } else {
+                            renderByClassId(data_id, pageNum, index, html);
+                        }
+                    }
+
+                }
+            }, 105);
+        }, 100);
+    }
+
+
+
+
+    /**
+     * 根据查询条件请求数据，并进行渲染下拉列表或渲染列表的操作
+     * @param select_input 搜索框
+     * @param select_show 下拉列表
+     * @param obj 搜索模块（包括搜索框、下拉列表）
+     * @param type 操作类型（render_select_show：只填充下拉列表 ； render_content：渲染列表）
+     */
+    function getdataList(select_input, select_show, obj, type) {
+        var parms = new Object();
+        parms["goodsName"] = select_input.val();
+        parms["pageNum"] = 1;
+        parms["pageSize"] = 20;
+
+        $.ajax({
+            cache: true,
+            type: "GET",
+            url: '/goods/search',
+            data: parms,
+            async: false,
+            success: function (data) {
+                if (type == "render_select_show") {
+                    if (data.data != null) {
+                        select_show.children().first().hide().nextAll().remove();
+                        for (var i = 0; i < data.data.rows.length; i++) {
+                            html = '<dd lay-value="' + data.data.rows[i].goodsName + '" class="">' + data.data.rows[i].goodsName + '</dd>';
+                            select_show.append(html);
+                            select_show.css("display", "block");
+                        }
+
+                        obj.delegate('dd', 'click', function () {
+                            select_input.val($(this).text());
+                            getdataList(select_input, select_show, obj, "render_content");
+                            $(".swiper_classifacation").css("display", "none");
+                            $(".swiper_list").css("top", "2.22rem");
+                        });
+                    }
+                } else {
+                    if (data.data.rows.length != 0) {
+                        var slide_active_index = $("#classification").find("div[class*='selected']")[0].dataset.index;
+                        totalPage = Math.ceil(data.data.total / pageSize);
+                        select_show.children().first().hide().nextAll().remove();
+                        select_show.css("display", "none");
+                        renderSwiperList(data.data.rows, slide_active_index, "");
+                        $(".swiper_classifacation").css("display", "none");
+                        $(".swiper_list").css("top", "2.22rem");
+                    } else {
+                        layer.msg('没有找到商品');
+                    }
+                }
+            },
+            error: function (request) {
+                layer.msg("搜索出错", {icon: 2});
+            }
+        });
+    }
+
+
+
+    /**
+     * select模糊搜索
+     * @param obj 搜索模块（包括搜索框、下拉列表）
+     */
+    function vagueselect(obj) {
+        var select_input = obj.find('[name="select_input"]')
+        var select_show = obj.find('[name="select_show"]')
+
+        getdataList(select_input, select_show, obj, "render_select_show");
+    }
+
+
+    /**
+     * 监听页面滑动，改变选项卡定位
+     */
+    function controlClassPosition() {
+        var navH = $("#slide_show").height();
+        if(navH == 0)
+        {
+            setTimeout(function () {
+                controlClassPosition();
+            },100)
+        }
+        else
+        {
+            //滚动条事件
+            $(window).scroll(function(){
+                //获取滚动条的滑动距离
+                var scroH = $(this).scrollTop();
+                //滚动条的滑动距离大于等于定位元素距离浏览器顶部的距离，就固定，反之就不固定
+                if(scroH>=navH){
+                    $("#classification").css({"position":"fixed"});
+                    $("#classification").css({"top":$("#search_wrapper").height() + "px"});
+                    $("#coupon_wrapper").css({"margin-top":"0.3rem"});
+                }else if(scroH<navH){
+                    $("#classification").css({"position":"relative"});
+                    $("#classification").css({"top":"0"});
+                    $("#coupon_wrapper").css({"margin-top":"0.05rem"});
+                }
+            })
+        }
+    }
+
+
+
+
+
+    /**
+     * 渲染轮播图
+     */
+    function renderSlide() {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            data: {
+                pageSize: 20,
+                pageNum: 1,
+            },
+            url: "/advert/readByState",
+            success: function (data) {
+                var html = "<div carousel-item=''>";
+                for (var i = 0; i < data.data.rows.length; i++) {
+                    var _html = "<div class='advert_item' data-link='"+ data.data.rows[i]["link"] +"'><img src='" + localhostPath + data.data.rows[i]["image"] + "'></div>";
+                    html += _html;
+                }
+                html += "</div>";
+                $("#slide_show").html(html);
+
+                $(".advert_item").click(function (obj) {
+                    if(obj.currentTarget.dataset.link != ""){
+                        window.location.href = obj.currentTarget.dataset.link;
+                    }
+                })
+
+
+
+                layui.use(['carousel'], function () {
+                    var carousel = layui.carousel; //元素操作
+                    carousel.render({
+                        elem: '#slide_show'
+                        , width: '100%'
+                        , height: '1rem'
+                        , anim: 'default'
+                        , autoplay: true
+                        , indicator: "none"
+                        , arrow: "always"
+                        , interval: 2000
+                    });
+
+                    var $ = layui.$, active = {
+                        set: function (othis) {
+                            var THIS = 'layui-bg-normal'
+                                , key = othis.data('key')
+                                , options = {};
+
+                            othis.css('background-color', '#5FB878').siblings().removeAttr('style');
+                            options[key] = othis.data('value');
+                            ins3.reload(options);
+                        }
+                    };
+
+                    // 为搜索框绑定键盘事件
+                    $('body').find("input[name=select_input]").bind('input keydown', function (event) {
+                        var select_input = $('[name="multiple_select"]').find('[name="select_input"]')
+                        var select_show = $('[name="multiple_select"]').find('[name="select_show"]')
+
+                        if ($('body').find("input[name=select_input]").val() != "") {
+                            if (event.keyCode == 13) {
+                                getdataList(select_input, select_show, $('[name="multiple_select"]'), "render_content");
+                            } else {
+                                vagueselect($('[name="multiple_select"]'));
+                            }
+                        } else {
+                            // 如果为空，就渲染首页
+                            select_show.children().first().hide().nextAll().remove();
+                            select_show.css("display", "none");
+                            $(".swiper_classifacation").css("display", "block");
+                            $(".swiper_list").css("top", "2.48rem");
+                            var slide_active_index = $("#classification").find("div[class*='selected']")[0].dataset.index;
+                            var class_id = $("#classification").find("div[class*='selected']")[0].dataset.id;
+                            renderByClassId(class_id, 1, slide_active_index, "");
+                        }
+                    })
+                });
+
+                controlClassPosition();
+
+            }
+        });
+    }
+    renderSlide();
+
+
+
+
+    /**
+     * 为当前选中的选项卡添加样式
+     * @param ele 选项卡元素
+     * @param index 对应选项卡的索引
+     */
+    function setCurrentSlide(ele, index) {
+        $(".swiper_classifacation .swiper-slide").removeClass("selected");
+        ele.addClass("selected");
+    }
+
+
+    /**
+     * 渲染列表
+     * @param data 列表数据
+     * @param index 对应选项卡的索引
+     * @param html 对应选项卡下的内容
+     */
+    function renderSwiperList(data, index, html) {
+        var html = html;
+        for (var i = 0; i < data.length; i++) {
+            var _html = "<div class=\"goods_item\" data-link='" + data[i].link + "' >" +
+                "<img src='" + localhostPath + data[i].image + "'>" +
+                "<div class=\"goods_name\">" + data[i].goodsName + "</div>" +
+                "<div class=\"price\"><span>￥</span>" + data[i].price + "</div>" +
+                "</div>";
+            html += _html;
+        }
+
+        layer.closeAll('loading');
+        $("#showGoodsWrapper .swiper-slide:eq(" + index + ")").html(html);
+        $(".goods_item").click(function (obj) {
+            window.location.href = obj.currentTarget.dataset.link;
+        })
+        swiper_list.update();
+    }
+
+
+    /**
+     * 根据分类获取商品
+     * @param classId 类别ID
+     * @param pageNum 页码
+     * @param index 对应选项卡的索引
+     * @param html 对应选项卡下的内容
+     */
+    function renderByClassId(classId, pageNum, index, html) {
+
+        if (classId == 0) {
+            renderAllGoods(pageNum, index, html)
+        } else {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                data: {
+                    pageSize: 20,
+                    pageNum: pageNum,
+                    goodsClassId: classId
+                },
+                url: "/goods/readByClassId",
+                success: function (data) {
+                    totalPage = Math.ceil(data.data.total / pageSize);
+                    renderSwiperList(data.data.rows, index, html);
+
+                }
+            });
+        }
+
+
+    }
+
+    /**
+     * 渲染全部商品
+     * @param pageNum 页码
+     * @param index 对应选项卡的索引
+     * @param html 对应选项卡下的内容
+     */
+    function renderAllGoods(pageNum, index, html) {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            data: {
+                pageSize: 20,
+                pageNum: pageNum
+            },
+            url: "/goods/list",
+            success: function (data) {
+                totalPage = Math.ceil(data.data.total / pageSize);
+                renderSwiperList(data.data.rows, index, html);
+            }
+        });
+    }
+
+
+</script>
 </body>
+
 </html>

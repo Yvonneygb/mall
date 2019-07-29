@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<div th:replace="pc/subgroup/commonHead::commonHead"></div>
+
+<div class="layui-body" id="LAY_app_body">
+    <form class="layui-form form-hide" id="search_form">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label">优惠券名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search_laydate_beginTime" name="beginTime"  class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search_laydate_endTime" name="endTime"  class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align: center">
+                <div class="layui-input-block" style="margin: initial">
+                    <button id="search_submit_btn" class="layui-btn" lay-submit lay-filter="formSearch">查询</button>
+                    <button type="button" class="layui-btn layui-btn-primary">取消</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="layui-hide" id="table_wrapper" lay-filter="table_wrapper"></table>
+    <div id="laypage_wrapper"></div>
+
+    <script type="text/html" id="barDemo">
+        <!--            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>-->
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script type="text/html" id="toolBarDiy">
+        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
+        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <div class="layui-inline" lay-event="search"><i class="layui-icon layui-icon-search"></i></div>
+    </script>
+</div>
+</html>
+
+<form class="layui-form form-hide" id="add_modify_layer">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">优惠券名称</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="id" class="layui-input" required>
+                <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input"
+                       lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">链接地址</label>
+            <div class="layui-input-block">
+                <input name="link" placeholder="请输入内容" class="layui-input"></input>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <div class="layui-inline">
+                <label class="layui-form-label">开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="modify_laydate_beginTime" name="beginTime"  class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="modify_laydate_endTime" name="endTime"  class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="text-align: center">
+            <div class="layui-input-block" style="margin: initial">
+                <button id="submit_btn" class="layui-btn" lay-submit lay-filter="formUpdate">立即提交</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    var laypage_wrapper_height = 0;
+    var pageSize = 10;
+
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'form'], function () {
+        var laydate = layui.laydate //日期
+            , laypage = layui.laypage //分页
+            , layer = layui.layer //弹层
+            , table = layui.table //表格
+            , carousel = layui.carousel //轮播
+            , upload = layui.upload //上传
+            , element = layui.element //元素操作
+            , slider = layui.slider //滑块
+            , form = layui.form // 表格
+
+
+
+        //监听表格提交-修改
+        form.on('submit(formUpdate)', function (data) {
+            $.post('/coupon/update', data.field, function (json) {
+                setTimeout(function () {
+                    parent.location.href = parent.location.href;
+                }, 1000);
+            })
+            return false;
+        });
+
+        //监听表格提交-新增
+        form.on('submit(formAdd)', function (data) {
+            $("#add_modify_layer").addClass("layui-hide");
+            $.post('/coupon/add', data.field, function (json) {
+                console.log(json)
+                setTimeout(function () {
+                    parent.location.href = parent.location.href;
+                }, 1000);
+            })
+        });
+
+        //监听表格提交-查询
+        form.on('submit(formSearch)', function (data) {
+            var data = data.field;
+            data["pageSize"] = 20;
+            data["pageNum"] = 1;
+            render_table("#frame_coupon", '/coupon/search', data);
+            hide_search_form();
+            return false;
+        });
+
+
+        window.render_table_success = function (data, page_data) {
+            if (page_data.pageNum == 1 && page_data.pageSize == 10) {
+                console.log("进来");
+                render_laypage(laypage, 'laypage_wrapper', 0, "#frame_coupon", "/coupon/list/");
+                laypage_wrapper_height = $(window.parent.document).contents().find("#frame_coupon").contents().find("#laypage_wrapper").height();
+                console.log(laypage_wrapper_height);
+            }
+
+            // 表格高度 = iframe高度 - 表格margin:10px  - 分页器高度
+            var frame_body = $(window.parent.document).contents().find("#frame_coupon")[0].contentWindow;
+            var table_height = frame_body.document.documentElement.scrollHeight -10 - laypage_wrapper_height;
+
+            // 向后台获取数据
+            var class_arr = [];
+
+            class_arr = data.data.rows;
+            //执行一个 table 实例
+            table.render({
+                elem: '#table_wrapper'
+                , height: table_height
+                , data: class_arr//数据接口
+                , title: '用户表'
+                , limit: 20
+                , toolbar: '#toolBarDiy' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                // ,totalRow: true //开启合计行
+                , cols: [
+                    [ //表头
+                        {type: 'checkbox', fixed: 'left'}
+                        , {field: 'id', title: 'ID', width: 150, fixed: 'left'}
+                        , {field: 'name', title: '优惠券名称', width: 480, totalRow: true}
+                        , {field: 'link', title: '描述', width: 760, totalRow: true}
+                        , {field: 'beginTime', title: '开始时间', width: 230, totalRow: true}
+                        , {field: 'endTime', title: '结束时间', width: 230, totalRow: true}
+                        , {field: 'addDate', title: '创建时间', width: 230, totalRow: true}
+                        , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+
+            if (page_data.pageNum == 1 && page_data.pageSize == 10) {
+                pageSize = render_laypage(laypage, 'laypage_wrapper', data.data.total, "#frame_coupon", "/coupon/list/");
+            }
+
+            laydate.render({
+                elem: "#search_laydate_beginTime"
+                ,format: 'yyyy-MM-dd HH:mm:ss'
+                ,type: 'datetime'
+                ,done: function(value, date, endDate){
+                    $("#search_laydate_beginTime").val(value);
+                }
+            });
+
+            laydate.render({
+                elem: "#search_laydate_endTime"
+                ,format: 'yyyy-MM-dd HH:mm:ss'
+                ,type: 'datetime'
+                ,done: function(value, date, endDate){
+                    $("#search_laydate_endTime").val(value);
+                }
+            });
+
+            laydate.render({
+                elem: "#modify_laydate_beginTime"
+                ,format: 'yyyy-MM-dd HH:mm:ss'
+                ,type: 'datetime'
+                ,done: function(value, date, endDate){
+                    $("#modify_laydate_beginTime").val(value);
+                }
+            });
+
+            laydate.render({
+                elem: "#modify_laydate_endTime"
+                ,format: 'yyyy-MM-dd HH:mm:ss'
+                ,type: 'datetime'
+                ,done: function(value, date, endDate){
+                    $("#modify_laydate_endTime").val(value);
+                }
+            });
+        }
+
+
+        // 要等查询模块隐藏后再计算高度
+        setTimeout(function () {
+            $(window.parent.document).contents().find("#frame_coupon")[0].contentWindow.render_table("#frame_coupon", "/coupon/list/", {
+                pageSize: pageSize,
+                pageNum: 1
+            });
+        }, 500)
+
+
+        //监听头工具栏事件
+        table.on('toolbar(table_wrapper)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id)
+                , data = checkStatus.data; //获取选中的数据
+
+            var layerLocation = getLayerLocation($("#LAY_app_body") , $("#add_modify_layer"));
+
+            switch (obj.event) {
+                case 'add':
+                    toolbarAddEvent(layer, '新增优惠券', layerLocation.layer_offsetTop, ['40%', layerLocation.layer_height], $("#add_modify_layer"));
+                    break;
+                case 'delete':
+                    toolbarDeleteEvent(layer, data, table, "POST", "/coupon/del/");
+                    break;
+                case 'search':
+                    show_search_form();
+                    $("#search_form").find("button[type=button]").click(function () {
+                        hide_search_form();
+                    })
+            }
+            ;
+
+        });
+
+        //监听行工具事件
+        //注：tool 是工具条事件名，table_wrapper 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(table_wrapper)', function (obj) {
+            //获得当前行数据
+            var data = obj.data
+                //获得 lay-event 对应的值
+                , layEvent = obj.event;
+            if (layEvent === 'detail') {
+                // 查看操作;
+            } else if (layEvent === 'del') {
+                tool_event_delete(layer, obj, "POST", "/coupon/del/", {"ids": obj.data.id});
+            } else if (layEvent === 'edit') {
+
+                $("#add_modify_layer").removeClass("layui-hide");
+                $("#submit_btn").attr("lay-filter", "formUpdate");
+
+                // 用优惠券id向后台请求数据，填补好add_layer
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/coupon/read/",
+                    data: {
+                        "id": obj.data.id
+                    },
+                    success: function (data) {
+                        console.log(data);
+
+                        $("#add_modify_layer").removeClass("layui-hide");
+                        $("#add_modify_layer").find("input[name=id]").val(data.id);
+                        $("#add_modify_layer").find("input[name=name]").val(data.name);
+                        $("#add_modify_layer").find("input[name=link]").val(data.link);
+
+                        laydate.render({
+                            elem: "#modify_laydate_beginTime"
+                            ,format: 'yyyy-MM-dd HH:mm:ss'
+                            ,value: data.beginTime //参数即为：2018-08-20 20:08:08 的时间戳
+                        });
+
+                        laydate.render({
+                            elem: "#modify_laydate_endTime"
+                            ,format: 'yyyy-MM-dd HH:mm:ss'
+                            ,value: data.endTime //参数即为：2018-08-20 20:08:08 的时间戳
+                        });
+
+                        var layerLocation = getLayerLocation($("#LAY_app_body") , $("#add_modify_layer"));
+
+                        layerOpen(layer, '编辑优惠券', layerLocation.layer_offsetTop, ['40%', layerLocation.layer_height], $("#add_modify_layer"));
+                    }
+                });
+            }
+        });
+    });
+</script>

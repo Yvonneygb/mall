@@ -57,21 +57,34 @@
         <!-- 配置表信息 -->
         <!-- schema即为数据库名 tableName为对应的数据库表 domainObjectName是要生成的实体类 enable*ByExample
             是否生成 example类 -->
-        <table tableName="user"
-               domainObjectName="UserVO" enableCountByExample="false"
+<!--        <table tableName="user"-->
+<!--               domainObjectName="UserVO" enableCountByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               enableUpdateByExample="false">-->
+<!--        </table>-->
+<!--        <table tableName="goods"-->
+<!--               domainObjectName="GoodsVO" enableCountByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               enableUpdateByExample="false">-->
+<!--        </table>-->
+<!--        <table tableName="classification"-->
+<!--               domainObjectName="ClassificationVO" enableCountByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               enableUpdateByExample="false">-->
+<!--        </table>-->
+<!--        <table tableName="advert"-->
+<!--               domainObjectName="AdvertVO" enableCountByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               enableUpdateByExample="false">-->
+<!--        </table>-->
+
+        <table tableName="coupon"
+               domainObjectName="CouponVO" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>
-        <table tableName="goods"
-               domainObjectName="GoodsVO" enableCountByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false">
-        </table>
-        <table tableName="classification"
-               domainObjectName="ClassificationVO" enableCountByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false">
-        </table>
+
+
 
     </context>
 </generatorConfiguration>

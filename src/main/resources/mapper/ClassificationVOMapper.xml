@@ -4,9 +4,11 @@
   <resultMap id="BaseResultMap" type="com.shopping.shoppingMall.entity.ClassificationVO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="describe_text" property="describeText" jdbcType="VARCHAR" />
+    <result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, class_name
+    id, class_name, describe_text , add_date
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -20,7 +22,7 @@
   </delete>
   <insert id="insert" parameterType="com.shopping.shoppingMall.entity.ClassificationVO" >
     insert into classification (id, class_name)
-    values (#{id,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR})
+    values (#{id,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR}, #{describeText,jdbcType=VARCHAR}, #{addDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.shopping.shoppingMall.entity.ClassificationVO" >
     insert into classification
@@ -31,6 +33,12 @@
       <if test="className != null" >
         class_name,
       </if>
+      <if test="describeText != null" >
+        describe_text,
+      </if>
+      <if test="addDate != null" >
+        add_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -38,6 +46,12 @@
       </if>
       <if test="className != null" >
         #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="describeText != null" >
+        #{describeText,jdbcType=VARCHAR},
+      </if>
+      <if test="addDate != null" >
+        #{addDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -47,12 +61,16 @@
       <if test="className != null" >
         class_name = #{className,jdbcType=VARCHAR},
       </if>
+      <if test="describeText != null" >
+        describe_text = #{describeText,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shopping.shoppingMall.entity.ClassificationVO" >
     update classification
-    set class_name = #{className,jdbcType=VARCHAR}
+    set class_name = #{className,jdbcType=VARCHAR},
+        describe_text = #{describeText,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findListHasAccount" resultMap="BaseResultMap" parameterType="Integer">
@@ -63,6 +81,14 @@
       <if test="flag == 1">
         id is not null
       </if>
+    </where>
+  </select>
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="com.shopping.shoppingMall.entity.ClassificationVO">
+    select
+    <include refid="Base_Column_List" />
+    from classification
+    <where>
+      ${condition.comboedExpressions}
     </where>
   </select>
 </mapper>

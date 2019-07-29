@@ -2,6 +2,7 @@ package com.shopping.shoppingMall.common.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,15 +21,18 @@ public class LoginAdapter implements WebMvcConfigurer {
     @Autowired
     private AdminLoginInterceptor adminLoginInterceptor;
 
+    @Value("${variables.img_url}")
+    private String img_url;
 
     /**
      * 表示这些配置的表示静态文件所处路径， 不用拦截
      */
+
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/localImg/**")
-                .addResourceLocations("file:D:\\img\\");
+        registry.addResourceHandler("/img/**")
+                .addResourceLocations("file:" + img_url);
     }
 
     /**
@@ -40,7 +44,9 @@ public class LoginAdapter implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(adminLoginInterceptor)
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/login");
+                .addPathPatterns("/", "/index/**", "/advert/**" , "/classification/**" , "/goods/**")
+                .excludePathPatterns("login", "showGoods", "/classification/list", "/advert/list", "/advert/readByState", "/goods/list", "/goods/search", "/goods/readByClassId");
+
+
     }
 }

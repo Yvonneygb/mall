@@ -4,31 +4,39 @@
   <resultMap id="BaseResultMap" type="com.shopping.shoppingMall.entity.GoodsVO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="goods_class_id" property="goodsClassId" jdbcType="INTEGER" />
+    <result column="goods_class_name" property="goodsClassName" jdbcType="VARCHAR" />
     <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="describe_text" property="describeText" jdbcType="VARCHAR" />
     <result column="image" property="image" jdbcType="VARCHAR" />
     <result column="price" property="price" jdbcType="INTEGER" />
     <result column="link" property="link" jdbcType="VARCHAR" />
+    <result column="add_Date" property="addDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, goods_class_id, goods_name, image, price, link
+    id, goods_class_id, goods_name, describe_text, image, price, link, add_Date
   </sql>
+<!--  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
+<!--    select-->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from goods-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </select>-->
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from goods
-    where id = #{id,jdbcType=INTEGER}
+    select g.* , c.class_name AS goods_class_name
+    from goods g LEFT JOIN classification c ON g.goods_class_id = c.id
+    where g.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from goods
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.shopping.shoppingMall.entity.GoodsVO" >
-    insert into goods (id, goods_class_id, goods_name, 
-      image, price, link)
-    values (#{id,jdbcType=INTEGER}, #{goodsClassId,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, 
-      #{image,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{link,jdbcType=VARCHAR})
+    insert into goods (id, goods_class_id, goods_name, describe_text,
+      image, price, link , add_date)
+    values (#{id,jdbcType=INTEGER}, #{goodsClassId,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, #{describeText,jdbcType=VARCHAR},
+      #{image,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{link,jdbcType=VARCHAR}, #{addDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.shopping.shoppingMall.entity.GoodsVO" >
+  <insert id="insertSelective" parameterType="com.shopping.shoppingMall.entity.GoodsVO"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into goods
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -40,6 +48,9 @@
       <if test="goodsName != null" >
         goods_name,
       </if>
+      <if test="describeText != null" >
+        describe_text,
+      </if>
       <if test="image != null" >
         image,
       </if>
@@ -48,6 +59,9 @@
       </if>
       <if test="link != null" >
         link,
+      </if>
+      <if test="addDate != null" >
+        add_date,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -60,6 +74,9 @@
       <if test="goodsName != null" >
         #{goodsName,jdbcType=VARCHAR},
       </if>
+      <if test="describeText != null" >
+        #{describeText,jdbcType=VARCHAR},
+      </if>
       <if test="image != null" >
         #{image,jdbcType=VARCHAR},
       </if>
@@ -69,9 +86,12 @@
       <if test="link != null" >
         #{link,jdbcType=VARCHAR},
       </if>
+      <if test="addDate != null" >
+        #{addDate,jdbcType=TIMESTAMP},
+      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shopping.shoppingMall.entity.GoodsVO" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shopping.shoppingMall.entity.GoodsVO">
     update goods
     <set >
       <if test="goodsClassId != null" >
@@ -79,6 +99,9 @@
       </if>
       <if test="goodsName != null" >
         goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="describeText != null" >
+        describe_text = #{describeText,jdbcType=VARCHAR},
       </if>
       <if test="image != null" >
         image = #{image,jdbcType=VARCHAR},
@@ -92,13 +115,30 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shopping.shoppingMall.entity.GoodsVO" >
+  <update id="updateByPrimaryKey" parameterType="com.shopping.shoppingMall.entity.GoodsVO">
     update goods
     set goods_class_id = #{goodsClassId,jdbcType=INTEGER},
       goods_name = #{goodsName,jdbcType=VARCHAR},
+      describe_text = #{describeText,jdbcType=VARCHAR},
       image = #{image,jdbcType=VARCHAR},
       price = #{price,jdbcType=INTEGER},
       link = #{link,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="findListHasAccount" resultMap="BaseResultMap" parameterType="Integer">
+    select g.* , c.class_name AS goods_class_name
+    from goods g LEFT JOIN classification c ON g.goods_class_id = c.id
+    <where>
+      <if test="flag == 1">
+        id is not null
+      </if>
+    </where>
+  </select>
+  <select id="findByCondition" resultMap="BaseResultMap" parameterType="com.shopping.shoppingMall.entity.GoodsVO">
+    select g.* , c.class_name AS goods_class_name
+    from goods g LEFT JOIN classification c ON g.goods_class_id = c.id
+    <where>
+      ${condition.comboedExpressions}
+    </where>
+  </select>
 </mapper>

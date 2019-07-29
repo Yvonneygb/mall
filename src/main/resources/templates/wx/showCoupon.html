@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<div th:replace="pc/subgroup/commonHead::commonHead"></div>
+<head>
+    <meta charset="utf-8">
+    <title>商城</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <script th:src="@{~/frame/swiper/js/swiper-3.4.0.jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{~/frame/swiper/css/swiper-3.2.7.min.css}">
+
+    <style>
+        body{
+            width: 100%;
+            height: fit-content;
+            min-height: -webkit-fill-available;
+            background-color: #fff;
+        }
+
+        #coupon_wrapper{
+            width: 96.5%;
+            height: 0.8rem;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 2px;
+
+        }
+
+        .coupon_item{
+            float: left;
+            width: 3rem;
+            height: 0.8rem;
+            margin-left: 0.04rem;
+            margin-top: 0.1rem;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .coupon_item.going_on{
+            background-image: url(../../static/images/coupon_bg_going_on.png);
+        }
+
+        .coupon_item.not_started{
+            background-image: url(../../static/images/coupon_bg_not_started.png);
+        }
+
+        .coupon_left{
+            float: left;
+            width: 67%;
+        }
+
+        .coupon_right{
+            float: left;
+            width: 33%;
+        }
+
+        .coupon_name{
+            width: 100%;
+            height: 0.55rem;
+            line-height: 0.7rem;
+            text-align: center;
+            font-size: 28px;
+            color:#fff;
+        }
+
+        .coupon_time{
+            width: 85%;
+            height: 0.15rem;
+            line-height: 0.15rem;
+            margin: 0 auto;
+            font-size: 8px;
+            background-color: #fff;
+            color: #fe3267;
+            text-align: center;
+        }
+
+        .coupon_time.not_started{
+            color: #CFD2D4;
+        }
+
+        .receive{
+            width: 0.4rem;
+            height: 0.1rem;
+            line-height: 0.1rem;
+            margin: 0 auto;
+            margin-top: 0.35rem;
+            padding: 0.05rem;
+            text-align: center;
+            background-color: #fff;
+            color: #fe3267;
+            font-size: 8px;
+            border-radius: 50px;
+        }
+
+        .receive.not_started{
+            color: #CFD2D4;
+        }
+
+        .title_wrapper{
+            width: 100%;
+            height: 0.25rem;
+            line-height: 0.25rem;
+            padding-top: 0.1rem;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #coupon_content{
+            width: 100%;
+            height: fit-content;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 优惠券 -->
+    <div id="coupon_wrapper">
+        <div class="title_wrapper">
+           领券中心
+        </div>
+        <div id="coupon_content"></div>
+    </div>
+</body>
+<script>
+    var html = "";
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "/coupon/readByEffectiveTime",
+        data:{
+            "endTime": changeTimeFormat(new Date())
+        },
+        success: function (data) {
+            var coupon_arr = data.data.rows;
+            for(var i = 0 ; i < coupon_arr.length ; i++)
+            {
+                var time_text = "";
+                var bg_class = "going_on";
+                var receive_text = "立即领取";
+
+                if(changeTimeFormat(new Date()) < coupon_arr[i]["beginTime"])
+                {
+                    // 没到开始时间
+                    time_text = coupon_arr[i]["beginTime"] + "开始";
+                    bg_class = "not_started";
+                    receive_text = "未开始";
+                }
+                else
+                {
+                    // 已经开始，没到结束时间
+                    time_text = coupon_arr[i]["endTime"] + "截止";
+                }
+
+                var _html = "<div class=\"coupon_item "+ bg_class +"\" data-link='"+ coupon_arr[i]["link"] +"'><div class=\"coupon_left\"><div class=\"coupon_name\">"+ coupon_arr[i]["name"] +"</div><div class=\"coupon_time "+ bg_class +"\">"+ time_text +"</div> </div><div class=\"coupon_right\"><div class=\"receive "+ bg_class +"\">"+ receive_text +"</div></div></div>";
+                html += _html;
+            }
+            $("#coupon_content").html(html);
+            $("#coupon_wrapper").find(".coupon_item").click(function (obj) {
+                if($(this).find(".coupon_time").html().indexOf("开始") != -1)
+                {
+                    layer.msg('活动未开始');
+                }
+                else
+                {
+                    window.location.href = obj.currentTarget.dataset.link;
+                }
+
+            })
+        }
+    });
+
+
+
+</script>
+</html>

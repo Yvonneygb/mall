@@ -56,4 +56,14 @@ public class PageVO<T> {
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
+
+    @Override
+    public String toString() {
+        return "PageVO{" +
+                "pageNum=" + pageNum +
+                ", pageSize=" + pageSize +
+                ", total=" + total +
+                ", rows=" + rows +
+                '}';
+    }
 }
